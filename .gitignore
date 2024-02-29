@@ -1,0 +1,9 @@
+.venv
+.idea
+.DS_Store
+
+*.log
+*.pyc
+*.so
+*.manifest
+*.spec
