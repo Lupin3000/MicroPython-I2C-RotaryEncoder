@@ -9,6 +9,7 @@ class DFRobot_VisualRotaryEncoder:
     """
     MicroPython class for communication with the Rotary Encoder from DFRobot via I2C
     """
+
     VISUAL_ROTARY_ENCODER_PID = const(0x01F6)
     VISUAL_ROTARY_ENCODER_PID_MSB_REG = const(0x00)
     VISUAL_ROTARY_ENCODER_COUNT_MSB_REG = const(0x08)
