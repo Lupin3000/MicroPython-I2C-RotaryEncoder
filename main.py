@@ -5,15 +5,18 @@ from time import sleep
 
 SDA_PIN = const(21)
 SCL_PIN = const(22)
-SECONDS = const(1)
+SECONDS = const(.5)
 
 
 if __name__ == '__main__':
-    encoder = DFRobot_VisualRotaryEncoder(sda=SDA_PIN, scl=SCL_PIN)
+    rotary_encoder = DFRobot_VisualRotaryEncoder(sda=SDA_PIN, scl=SCL_PIN)
 
-    print(encoder.get_device_info())
-    print(f'Encoder current gain coefficient: {encoder.get_gain_coefficient()}')
+    print(str(rotary_encoder))
+    print(f'Encoder current gain coefficient: {rotary_encoder.coefficient()}')
 
     while True:
-        print(f'Encoder value: {encoder.get_encoder_value()}')
+        if bool(rotary_encoder):
+            print('Encoder button pressed')
+
+        print(f'Encoder value: {rotary_encoder.value()}')
         sleep(SECONDS)

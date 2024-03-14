@@ -61,6 +61,20 @@ class DFRobot_VisualRotaryEncoder:
 
         return result
 
+    def _device_info(self) -> str:
+        """
+        Get the device PID, VID, version and I2C address
+        :return: string
+        """
+        data = self._read_reg(self.VISUAL_ROTARY_ENCODER_PID_MSB_REG, 8)
+
+        pid = (data[0] << 8) | data[1]
+        vid = (data[2] << 8) | data[3]
+        version = (data[4] << 8) | data[5]
+        i2c_addr = data[7]
+
+        return f'PID: {pid}, VID: {vid}, Version: {version}, I2C: {i2c_addr}'
+
     def set_gain_coefficient(self, gain_value: int) -> None:
         """
         Set the current gain factor of the encoder, and the numerical accuracy of turning one-step
@@ -82,29 +96,7 @@ class DFRobot_VisualRotaryEncoder:
             temp_buf = [(int(value) & 0xFF00) >> 8, int(value) & 0x00FF]
             self._write_reg(self.VISUAL_ROTARY_ENCODER_COUNT_MSB_REG, temp_buf)
 
-    def get_device_info(self) -> str:
-        """
-        Get the device PID, VID, version and I2C address
-        :return: string
-        """
-        data = self._read_reg(self.VISUAL_ROTARY_ENCODER_PID_MSB_REG, 8)
-
-        pid = (data[0] << 8) | data[1]
-        vid = (data[2] << 8) | data[3]
-        version = (data[4] << 8) | data[5]
-        i2c_addr = data[7]
-
-        return f'PID: {pid}, VID: {vid}, Version: {version}, I2C: {i2c_addr}'
-
-    def get_encoder_value(self) -> int:
-        """
-        Get the current encoder count
-        :return: value range： 0-1023
-        """
-        data = self._read_reg(self.VISUAL_ROTARY_ENCODER_COUNT_MSB_REG, 2)
-        return (data[0] << 8) | data[1]
-
-    def get_gain_coefficient(self) -> int:
+    def coefficient(self) -> int:
         """
         Get the current gain factor of the encoder, and the numerical accuracy of turning one-step
         accuracy range：1~51，the minimum is 1 (light up one LED about every 2.5 turns),
@@ -113,9 +105,24 @@ class DFRobot_VisualRotaryEncoder:
         """
         return self._read_reg(self.VISUAL_ROTARY_ENCODER_GAIN_REG, 1)[0]
 
-    def detect_button_down(self) -> bool:
+    def value(self) -> int:
         """
-        Detect if the button is pressed
+        Get the current encoder count
+        :return: value range： 0-1023
+        """
+        data = self._read_reg(self.VISUAL_ROTARY_ENCODER_COUNT_MSB_REG, 2)
+        return (data[0] << 8) | data[1]
+
+    def __str__(self):
+        """
+        Return string representation of the device information
+        :return: str
+        """
+        return self._device_info()
+
+    def __bool__(self):
+        """
+        Return bool (True if the button is pressed, False otherwise)
         :return: bool
         """
         if 1 == self._read_reg(self.VISUAL_ROTARY_ENCODER_KEY_STATUS_REG, 1)[0]:
